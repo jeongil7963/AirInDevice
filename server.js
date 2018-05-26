@@ -32,7 +32,7 @@ client.auth(function () {
 });
 
 //라즈베리파이와 연결된 디바이스 주소
-var port = new SerialPort('/dev/ttyAMA0', {
+var port = new SerialPort('/dev/ttyACM0', {
     baudRate: 9600
 });
 
@@ -48,6 +48,7 @@ port.on('error', function(err) {
 });
 
 parser.on('data', function(data) {
+    console.log("hihihi");
     console.log('Read and Send Data : ' + data);
     var sensorObj = data.toString(); // json 형식 data를 객체형식으로 저장
     switch_value = "On";
