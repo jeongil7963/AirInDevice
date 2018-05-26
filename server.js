@@ -48,8 +48,7 @@ port.on('error', function(err) {
 });
 
 parser.on('data', function(data) {
-    console.log("hihihi");
-    console.log('Read and Send Data : ' + data);
+    console.log(data);
     var sensorObj = data.toString(); // json 형식 data를 객체형식으로 저장
     switch_value = "On";
 
