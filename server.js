@@ -6,12 +6,6 @@ var parser = new parsers.Readline({
     delimiter: '\r\n'
 });
 
-//라즈베리파이와 연결된 디바이스 주소
-var port = new SerialPort('/dev/ttyACM0', {
-    baudRate: 9600
-});
-
-
 var switch_value;
 
 //ubidots 연결
@@ -37,6 +31,10 @@ client.auth(function () {
 
 });
 
+//라즈베리파이와 연결된 디바이스 주소
+var port = new SerialPort('/dev/ttyACM0', {
+    baudRate: 9600
+});
 
 //포트 열기
 port.pipe(parser);
