@@ -13,13 +13,9 @@ var port = new SerialPort('/dev/ttyACM0', {
   baudRate: 9600
 });
 
-//gpio
-var gpio = require("gpio");
-var gpio22 = gpio.export(22, {
-   direction: "in",
-   ready: function() {
-   }
-});
+var onoff = require('onoff');
+var Gpio = onoff.Gpio;
+var power = new Gpio(24, 'out');
 
 //포트 열기
 port.pipe(parser);
@@ -71,14 +67,10 @@ function aircon() {
     });
     if(now_aircon == 1){
       // sets pin to high
-      gpio22.set(function() {
-         console.log(gpio4.value);    // should log 1
-      });
+      power.writeSync(1);
     }
     else{
-      gpio22.set(0, function() {
-         console.log(gpio4.value);    // should log 0
-      });
+      power.writeSync(0);
     }
   });
 }
