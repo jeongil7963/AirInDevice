@@ -62,7 +62,7 @@ function aircon() {
     var get_in_auto = this.getVariable('5afc0db9642ab65a452cab31');
     var now_aircon;
     get_in_auto.getValues(function (err, data) {
-      now_aircon = data.results[0].value;
+      now_aircon = data.results[0].value.toString();
       console.log("aircone : " + now_aircon);
     });
     if(now_aircon == 1){
