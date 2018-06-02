@@ -71,12 +71,17 @@ function aircon() {
     });
     if(now_aircon == 1){
       // sets pin to high
-      gpio22.set();
+      gpio22.set(function() {
+         console.log(gpio4.value);    // should log 1
+      });
     }
     else{
-      gpio22.set(0);
+      gpio22.set(0, function() {
+         console.log(gpio4.value);    // should log 0
+      });
     }
   });
 }
+
 
 setInterval(aircon, 1000);
