@@ -1,55 +1,81 @@
-
-
 var SerialPort = require('serialport'); //아두이노와 시리얼 통신할 수 있는 모듈
 var parsers = SerialPort.parsers;
 var parser = new parsers.Readline({
-    delimiter: '\r\n'
+  delimiter: '\r\n'
 });
-
-var switch_value;
 
 //ubidots 연결
 var ubidots = require('ubidots');
 var client = ubidots.createClient('BBFF-42c1d32ee052243010a1dd861d2d91b75bb');
 
-client.auth(function () {
-  var send_in_air = this.getVariable('5afab9c3642ab6461f5eca53');
-  var send_out_air = this.getVariable('5afab9b9642ab64592357ed1');
-  var send_switch = this.getVariable('5afab9d1642ab64677b501eb');
-  var send_in_temp = this.getVariable('5afaba00642ab6453f72f650');
-  var send_out_temp = this.getVariable('5afc0d18642ab659c69e72ec');
-  var send_in_humi = this.getVariable('5affb44c642ab67c7705273e');
-  var send_out_humi = this.getVariable('5affb45b642ab67cdfa37987');
-
-  send_in_air.saveValue('56');
-  send_out_air.saveValue('160');
-  send_switch.saveValue('1');
-  send_in_temp.saveValue(37);
-  send_out_temp.saveValue(40.23);
-  send_in_humi.saveValue(55.23);
-  send_out_humi.saveValue(60.23);
-
-});
-
 //라즈베리파이와 연결된 디바이스 주소
 var port = new SerialPort('/dev/ttyACM0', {
-    baudRate: 9600
+  baudRate: 9600
+});
+
+//gpio
+var gpio = require("gpio");
+var gpio22 = gpio.export(22, {
+   direction: "in",
+   ready: function() {
+   }
 });
 
 //포트 열기
 port.pipe(parser);
 port.on('open', function() {
-    console.log('port open');
+  console.log('port open');
 });
 
 // open errors will be emitted as an error event
 port.on('error', function(err) {
-    console.log('Error: ', err.message);
+  console.log('Error: ', err.message);
 });
 
-parser.on('data', function(data) {
+client.auth(function() {
+  var send_in_air = this.getVariable('5afab9c3642ab6461f5eca53');
+  var send_in_temp = this.getVariable('5afaba00642ab6453f72f650');
+  var send_in_humi = this.getVariable('5affb44c642ab67c7705273e');
+  var send_in_detect = this.getVariable('5b0e83f7642ab679eb510223');
+  var get_in_auto = this.getVariable('5afc0db9642ab65a452cab31');
+
+  parser.on('data', function(data) {
     console.log(data);
-    var sensorObj = data.toString(); // json 형식 data를 객체형식으로 저장
-    switch_value = "On";
+    var str = data.toString();
+    var strArray = str.split('-');
+    var sensorObj;
 
+    if (strArray[0] == '1') {
+      sensorObj = strArray[1];
+      send_in_air.saveValue(sensorObj)
+    } else if (strArray[0] == '2') {
+      sensorObj = strArray[1];
+      send_in_temp.saveValue(sensorObj);
+    } else if (strArray[0] == '3') {
+      sensorObj = strArray[1];
+      send_in_humi.saveValue(sensorObj);
+    } else if (strArray[0] == '4') {
+      sensorObj = strArray[1];
+      send_in_detect.saveValue(sensorObj);
+    }
+  });
 });
+
+function aircon() {
+  client.auth(function() {
+    var get_in_auto = this.getVariable('5afc0db9642ab65a452cab31');
+    get_in_auto.getValues(function (err, data) {
+      var now_aircon = data.results[0].value;
+      console.log("aircone : " + now_aircon);
+    });
+    if(now_aircon == 1){
+      // sets pin to high
+      gpio22.set();
+    }
+    else{
+      gpio22.set(0);
+    }
+  });
+}
+
+setInterval(aircon, 1000);
