@@ -61,19 +61,21 @@ function aircon() {
   client.auth(function() {
     var get_in_auto = this.getVariable('5afc0db9642ab65a452cab31');
     var now_aircon;
+
     get_in_auto.getValues(function (err, data) {
       now_aircon = data.results[0].value.toString();
       console.log("aircone : " + now_aircon);
+
+      if(now_aircon == 1){
+        // sets pin to high
+        power.writeSync(1);
+        console.log("power.writeSync(1);");
+      }
+      else{
+        power.writeSync(0);
+        console.log("power.writeSync(0);");
+      }
     });
-    if(now_aircon == 1){
-      // sets pin to high
-      power.writeSync(1);
-      console.log("power.writeSync(1);");
-    }
-    else{
-      power.writeSync(0);
-      console.log("power.writeSync(0);");
-    }
   });
 }
 
