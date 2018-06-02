@@ -68,9 +68,11 @@ function aircon() {
     if(now_aircon == 1){
       // sets pin to high
       power.writeSync(1);
+      console.log("power.writeSync(1);");
     }
     else{
       power.writeSync(0);
+      console.log("power.writeSync(0);");
     }
   });
 }
