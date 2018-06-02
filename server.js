@@ -15,7 +15,7 @@ var port = new SerialPort('/dev/ttyACM0', {
 
 var onoff = require('onoff');
 var Gpio = onoff.Gpio;
-var power = new Gpio(24, 'out');
+var power = new Gpio(22, 'out');
 
 //포트 열기
 port.pipe(parser);
