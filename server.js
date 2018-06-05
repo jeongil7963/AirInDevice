@@ -27,11 +27,11 @@ var power = new Gpio(22, 'out');
 var scp = require('scp');
 
 var options = {
-  file: '~/Documents/AirInCar/public/images/img.jpg',
+  file: '~/AirInDevice/images/img.jpg',
   user: 'JEONG IL',
   host: '192.168.25.55',
   port: '22',
-  path: '~'
+  path: '~/Documents/AirInCar/public/images/'
 }
 
 //포트 열기
