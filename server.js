@@ -26,9 +26,9 @@ var power = new Gpio(22, 'out');
 var scp = require('scp');
 
 var options = {
-  file: './img.jpg',
+  file: './images/img.jpg',
   user: 'JEONG IL',
-  host: '192.168.0.7',
+  host: '192.168.25.55',
   port: '22',
   path: '~'
 }
@@ -107,7 +107,7 @@ function camera_starting(){
 // 현재 시간으로 카메라 설정 세팅
 function camera_setting(){
     timeInMs = moment().format('YYYYMMDDHHmmss');
-    photo_path = __dirname+"/images/img1.jpg";
+    photo_path = __dirname+"/images/img.jpg";
     cmd_photo = 'raspistill -vf -t 1 -w 370 -h 280 -o '+photo_path;
     setTimeout(() => {
         camera_shooting();
