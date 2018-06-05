@@ -27,7 +27,7 @@ var power = new Gpio(22, 'out');
 var scp = require('scp');
 
 var options = {
-  file: './images/img.jpg',
+  file: '~/Documents/AirInCar/public/images/img.jpg',
   user: 'JEONG IL',
   host: '192.168.25.55',
   port: '22',
