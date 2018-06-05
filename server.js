@@ -4,6 +4,12 @@ var parser = new parsers.Readline({
   delimiter: '\r\n'
 });
 
+//카메라 사용자 촬영 설정
+var timeInMs;
+var exec_photo = require('child_process').exec;
+var photo_path;
+var cmd_photo;
+
 //ubidots 연결
 var ubidots = require('ubidots');
 var client = ubidots.createClient('BBFF-42c1d32ee052243010a1dd861d2d91b75bb');
@@ -16,6 +22,16 @@ var port = new SerialPort('/dev/ttyACM0', {
 var onoff = require('onoff');
 var Gpio = onoff.Gpio;
 var power = new Gpio(22, 'out');
+
+var scp = require('scp');
+
+var options = {
+  file: './img.jpg',
+  user: 'JEONG IL',
+  host: '192.168.0.7',
+  port: '22',
+  path: '~'
+}
 
 //포트 열기
 port.pipe(parser);
@@ -81,3 +97,41 @@ function aircon() {
 
 
 setInterval(aircon, 1000);
+
+// 카메라 설정 시간 간격 마다 촬영 실행
+function camera_starting(){
+    camera_setting(); // 처음 한번 촬영
+    camera_interval = setInterval(camera_setting, 3000); // 설정 시간 후에 반복 촬영
+};
+
+// 현재 시간으로 카메라 설정 세팅
+function camera_setting(){
+    timeInMs = moment().format('YYYYMMDDHHmmss');
+    photo_path = __dirname+"/images/img1.jpg";
+    cmd_photo = 'raspistill -vf -t 1 -w 370 -h 280 -o '+photo_path;
+    setTimeout(() => {
+        camera_shooting();
+      }, 500);
+};
+
+// 설정된 값으로 카메라 촬영
+function camera_shooting(){
+    exec_photo(cmd_photo,function(err,stdout,stderr){
+        if(err){
+            console.log('child process exited with shooting_photo error code', err.code);
+            return;
+        }
+        console.log("photo captured with filename: " +timeInMs);
+        camera_sending();
+    });
+}
+
+// 촬영 이미지 전송
+function camera_sending(){
+  scp.send(options, function (err) {
+    if (err) console.log(err);
+    else console.log('File transferred.');
+  });
+};
+
+camera_starting();
