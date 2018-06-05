@@ -9,6 +9,7 @@ var timeInMs;
 var exec_photo = require('child_process').exec;
 var photo_path;
 var cmd_photo;
+var moment = require('moment');
 
 //ubidots 연결
 var ubidots = require('ubidots');
